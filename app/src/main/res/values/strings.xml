@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">EcarG</string>
+    <string name="connectButtonText">Connect device</string>
+</resources>
