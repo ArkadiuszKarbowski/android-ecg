@@ -25,7 +25,9 @@ tools:context=".MainActivity">
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/connectButton"
@@ -39,7 +41,7 @@ tools:context=".MainActivity">
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="Status: Rozłączono" />
+            android:text='@string/statusText_default' />
 
     </LinearLayout>
 
