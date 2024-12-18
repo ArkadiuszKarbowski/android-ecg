@@ -33,7 +33,7 @@ tools:context=".MainActivity">
             android:id="@+id/connectButton"
             android:layout_width="266dp"
             android:layout_height="wrap_content"
-            android:text="@string/connectButtonText" />
+            android:text="@string/connectButtonText_connect" />
 
         <TextView
             android:id="@+id/statusText"

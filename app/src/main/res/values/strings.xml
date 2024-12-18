@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">ECarG</string>
-    <string name="connectButtonText">Connect device</string>
+    <string name="connectButtonText_connect">Connect device</string>
     <string name="statusText_connected">Status: connected</string>
     <string name="statusText_disconnected">Status: disconnected</string>
     <string name="statusText_connecting">Status: connecting…</string>
     <string name="statusText_default">Status:</string>
+    <string name="connectButtonText_disconnect">Disconect device</string>
 </resources>

@@ -1,4 +1,6 @@
 import android.Manifest
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -11,6 +13,8 @@ import androidx.core.app.ActivityCompat
 import com.polidea.rxandroidble3.RxBleClient
 import com.polidea.rxandroidble3.RxBleConnection
 import com.polidea.rxandroidble3.RxBleDevice
+import com.polidea.rxandroidble3.scan.ScanFilter
+import com.polidea.rxandroidble3.scan.ScanSettings
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -112,6 +116,49 @@ class BleManager(private val context: Context) {
                 permission
             ) == PackageManager.PERMISSION_GRANTED
         }
+    }
+    @SuppressLint("MissingPermission")
+    fun startBleScan() {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("BleManager", "Bluetooth not supported")
+            return
+        }
+
+        if (!bluetoothAdapter.isEnabled) {
+            // Prompt user to enable Bluetooth
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            context.startActivity(enableBtIntent)
+            return
+        }
+
+        scanForDevice()
+    }
+    private var scanDisposable: Disposable? = null
+
+    fun scanForDevice() {
+        val scanSettings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .build()
+
+        val scanFilter = ScanFilter.Builder()
+            .setDeviceAddress(DEVICE_MAC_ADDRESS)
+            .build()
+
+        scanDisposable?.dispose() // Cancel any existing scan
+        scanDisposable = rxBleClient.scanBleDevices(scanSettings, scanFilter)
+            .take(1) // Only take the first matching device
+            .subscribe({ scanResult ->
+                Log.d("BleManager", "Device found: ${scanResult.bleDevice.macAddress}")
+                bleDevice = scanResult.bleDevice
+                connect()
+            }, { error ->
+                Log.e("BleManager", "Scan error", error)
+                connectionStateSubject.onNext(ConnectionState.Error("Scan failed: ${error.message}"))
+            })
+
+        // Add the disposable to the composite disposable to manage its lifecycle
+        scanDisposable?.let { compositeDisposable.add(it) }
     }
 
     fun connect() {
